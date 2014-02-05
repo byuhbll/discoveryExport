@@ -1,32 +1,31 @@
-discoveryExport
-===============
+#discoveryExport
 
 Export publicly viewable catalog records from SirsiDynix Symphony.  
 
-#Installation
+##Installation
 
-This application is dependent on the Ostinato Perl Library, v.2.1 (https://github.com/byuhbll/ostinato) and inherits that library's dependencies.
+This application is dependent on BYU's [Ostinato Perl Library](https://github.com/byuhbll/ostinato), v.2.1 and inherits that library's dependencies.
 
 After cloning this repository, the only other required installation step is to add or link to Ostinato.  **export.pl** will import Ostinato from a resource called **ostinato** located in the same directory as **export.pl**.  You can either download Ostinato directly into that location, or use a symbolic link (recommended).
 
 Please note that this script uses several GNU utilities and has only been tested for use on \*nix systems.
 
-#Usage
+##Usage
 
 To export records, simply provide a list of catalog keys (either as command-line arguments or through standard input) to **export.pl**.  The script will automatically identify which catalog keys keys represent publicly visible bibliographic records and exports them accordingly.
 
 Examples:
 
 ```bash
-./export.pl [*options*] 123456 789011
-cat listOfKeys.txt | ./export.pl [*options]
+./export.pl [options] 123456 789011
+cat listOfKeys.txt | ./export.pl [options]
 ```
 
-##Input
+###Input
 
 This script accepts a list of keys as command line variables.  If no keys are provided, standard input will be used instead.  To allow for compatability with Symphony APIs, input may consist of pipe-delimited data.  Only the characters before the first pipe (|) will be tested as a potential catalog key.
 
-##Output
+###Output
 
 This script will write one or more files to the destination directory (the current directory by default, can be overridden).  The files will be suffixed with "visible" or "hidden" according to the following logic:
 
