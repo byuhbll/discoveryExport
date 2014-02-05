@@ -34,3 +34,13 @@ Keys which do not exist in the ILS, or for which the record is shadowed (or cont
 Resulting output files may be written in SirsiDynix's proprietary FLAT format, MARC transmission format, or MARCXML.  Other options are available to change the destination directory and filenames, to split the output into multiple "chunks", or to compress all the output files into a single .tar.gz.
 
 The path(s) to all created files will be send to standard output.  Any unprocessable input and other error messages will be sent to standard error.
+
+##Documentation
+
+Full usage documentation, including the list of available options, is available by running:
+
+```bash
+perldoc ./export.pl
+#or...
+./export.pl --help
+```
