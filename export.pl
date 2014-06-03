@@ -77,9 +77,9 @@ my $chunkSize = defined $optFlags{'chunk-size'}  ?  $optFlags{'chunk-size'}  :  
 
 #Validate format
 my $format = defined $optFlags{'format'}  ?  lc($optFlags{'format'})  :  Ostinato::Export::FORMAT_FLAT;
-if($format ne Ostinato::Export::FORMAT_FLAT && $format ne Ostinato::Export::FORMAT_MARC && $format ne Ostinato::Export::FORMAT_XML) {
+if($format ne Ostinato::Export::FORMAT_FLAT && $format ne Ostinato::Export::FORMAT_MARC && $format ne Ostinato::Export::FORMAT_XML && $format ne "keys") {
 	pod2usage({
-		-message => "ERROR: Unknown format requested.  Valid options are \"flat\", \"marc\" and \"marcxml\".\n",
+		-message => "ERROR: Unknown format requested.  Valid options are \"flat\", \"marc\", \"marcxml\". and \"keys\"\n",
 		-verbose => 1,
 	});
 }
@@ -148,7 +148,11 @@ while( my($key, $visible) = each %$keyHash) {
 		#If we have a maximum chunk size and we reach it, dump the records and reset the visible keys file
 		if($chunkSize > 0 && $visibleCount >= $chunkSize) {
 			close(VISIBLE_KEYS_FILE);
-			push(@files, $exporter->catalogdump({source=>$visibleKeysFile, format=>$format, destination=>"$destination/$partialFilename.visible.$visibleChunk"}));
+			if($format eq "keys") {
+				push(@files, $exporter->createEmptyRecord({source=>$visibleKeysFile, format=>"raw", destination=>"$destination/$partialFilename.visible.$visibleChunk"}));
+			} else {
+				push(@files, $exporter->catalogdump({source=>$visibleKeysFile, format=>$format, destination=>"$destination/$partialFilename.visible.$visibleChunk"}));
+			}
 			$visibleChunk++;
 			$visibleCount = 0;
 			open VISIBLE_KEYS_FILE, ">", $visibleKeysFile;
@@ -176,7 +180,11 @@ undef %$keyHash;
 #This is the last chunk.  Dump the records (for visible keys) and convert the keys to empty records (for hidden keys)
 if($visibleChunk > 0 || $hiddenChunk > 0) {
 	if($visibleCount > 0) {
-		push(@files, $exporter->catalogdump({source=>$visibleKeysFile, format=>$format, destination=>"$destination/$partialFilename.visible.$visibleChunk"}));
+		if($format eq "keys") {
+			push(@files, $exporter->createEmptyRecord({source=>$visibleKeysFile, format=>"raw", destination=>"$destination/$partialFilename.visible.$visibleChunk"}));
+		} else {
+			push(@files, $exporter->catalogdump({source=>$visibleKeysFile, format=>$format, destination=>"$destination/$partialFilename.visible.$visibleChunk"}));
+		}
 	}
 	if($hiddenCount > 0) {
 		push(@files, $exporter->createEmptyRecord({source=>$hiddenKeysFile, format=>$format, destination=>"$destination/$partialFilename.hidden.$hiddenChunk"}));
@@ -186,7 +194,11 @@ if($visibleChunk > 0 || $hiddenChunk > 0) {
 else {
 	#Export visible keys, if any exist
 	if($visibleCount > 0) {
-		push(@files, $exporter->catalogdump({source=>$visibleKeysFile, format=>$format, destination=>"$destination/$partialFilename.visible"}));
+		if($format eq "keys") {
+			push(@files, $exporter->createEmptyRecord({source=>$visibleKeysFile, format=>"raw", destination=>"$destination/$partialFilename.visible"}));
+		} else {
+			push(@files, $exporter->catalogdump({source=>$visibleKeysFile, format=>$format, destination=>"$destination/$partialFilename.visible"}));
+		}
 	}
 	#Export hidden keys, if any exist
 	if($hiddenCount > 0) {
